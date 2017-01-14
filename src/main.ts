@@ -1,3 +1,3 @@
-function merge(name: string) {
-  console.log(`Hello ${name}`);
-}
+import { sayHello } from "./greet";
+
+console.log(sayHello("TypeScript"));

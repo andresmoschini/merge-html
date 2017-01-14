@@ -4,5 +4,34 @@
   "description": "Merge multiple html files in only one file",
   "main": "./dist/main.js",
   "author": "Andrés Moschini",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": "4.5.0"
+  },
+  "bin": {
+    "merge-html": "bin/merge-html.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andresmoschini/merge-html.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andresmoschini/merge-html/issues"
+  },
+  "scripts": {
+    "test": "echo test",
+    "pretest": "yarn run compile",
+    "start": "node dist/main.js",
+    "prestart": "yarn run compile",
+    "precompile": "yarn run clean",
+    "clean": "rimraf dist/*",
+    "compile": "yarn run compile:ts",
+    "compile:ts": "yarn run tsc -- --project src"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.0",
+    "@types/rimraf": "^0.0.28",
+    "rimraf": "^2.5.4",
+    "typescript": "^2.1.5"
+  }
 }
