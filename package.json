@@ -1,0 +1,8 @@
+{
+  "name": "merge-html",
+  "version": "0.0.1",
+  "description": "Merge multiple html files in only one file",
+  "main": "./dist/main.js",
+  "author": "Andrés Moschini",
+  "license": "MIT"
+}
