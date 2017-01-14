@@ -1,3 +1,3 @@
 import { sayHello } from "./greet";
 
-console.log(sayHello("TypeScript"));
+console.log(sayHello(process.argv[2] || "TypeScript"));
