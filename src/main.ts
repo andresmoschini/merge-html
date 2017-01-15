@@ -1,29 +1,30 @@
 import { sayHello } from "./greet";
+import * as fs from "fs";
 
-class Document {
+// TODO: support relative and absolute file paths based on html paths
+
+interface IDocument {
   filename: string;
   elementId: string;
   content: string;
-  getReferencedFilenames = function(): string[] {
-      return [];
-  }
 }
 
 class Library {
   static elementIdPrefix: string = "merge-html-";
-  documents: Document[] = [];
-  documentsByFilename: { [filename: string]: Document } = {}; 
+  documents: IDocument[] = [];
+  documentsByFilename: { [filename: string]: IDocument } = {}; 
   documentsCount: number = 0;
 
-  public addDocument(filename: string, content: string): Document {
+  public addDocument(filename: string, content: string): IDocument {
     if (this.hasDocument(filename)) {
       throw `File ${filename} already exist in this library.`;
     }
     this.documentsCount++;
-    var document = new Document();
-    document.filename = filename;
-    document.elementId = Library.elementIdPrefix + this.documentsCount;
-    document.content = content;
+    var document = {
+      filename: filename,
+      elementId: Library.elementIdPrefix + this.documentsCount,
+      content: content
+    }
     this.documents.push(document);
     this.documentsByFilename[filename] = document;
     return document;
@@ -34,22 +35,20 @@ class Library {
   }
 }
 
-interface resultTree {
-    body: string;
-    childs: resultTree;
+function readFile(filename: string): string {
+  // TODO: make it async
+  return fs.readFileSync(filename, "utf8");
 }
 
-function readFile(filename: string) {
-    return filename;
+function getReferencedFilenames(content: string): string[] {
+  return /href="(.*\.html)"/g.exec(content);
 }
-
-
 
 function processFile(library: Library, filename: string) {
   if (!library.hasDocument(filename)) {
     var content = readFile(filename);
     var document = library.addDocument(filename, content);
-    document.getReferencedFilenames().forEach(rf => {
+    getReferencedFilenames(content).forEach(rf => {
         processFile(library, rf);
     });
   }
