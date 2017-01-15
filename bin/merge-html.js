@@ -1,2 +1,3 @@
 #! /usr/bin/env node
-require("../dist/main");
+var main = require("../dist/main").default;
+main(process.argv);
