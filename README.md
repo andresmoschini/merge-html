@@ -11,3 +11,4 @@ Merge multiple html files in only one file
 * https://github.com/tj/commander.js
 * https://github.com/substack/minimist
 * https://github.com/yargs/yargs
+* https://github.com/Microsoft/TypeScriptSamples/tree/master/react-flux-babel-karma
