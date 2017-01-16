@@ -41,7 +41,7 @@ function readFile(filename: string): string {
 }
 
 function getReferencedFilenames(content: string): string[] {
-  return /href="(.*\.html)"/g.exec(content);
+  return /href="(.*\.html)"/g.exec(content).map(x => x[1]);
 }
 
 function processFile(library: Library, filename: string) {
