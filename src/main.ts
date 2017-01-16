@@ -12,7 +12,7 @@ interface IDocument {
 class Library {
   static elementIdPrefix: string = "merge-html-";
   documents: IDocument[] = [];
-  documentsByFilename: { [filename: string]: IDocument } = {}; 
+  documentsByFilename: { [filename: string]: IDocument } = {};
   documentsCount: number = 0;
 
   public addDocument(filename: string, content: string): IDocument {
@@ -41,7 +41,13 @@ function readFile(filename: string): string {
 }
 
 function getReferencedFilenames(content: string): string[] {
-  return /href="(.*\.html)"/g.exec(content).map(x => x[1]);
+  var result = [];
+  var regexp = /href=["'](.*?\.html)["']/g;
+  var item;
+  while(item = regexp.exec(content)) {
+    result.push(item[1]);
+  }
+  return result;
 }
 
 function processFile(library: Library, filename: string) {
@@ -58,4 +64,4 @@ export default function main(argv: string[]) {
   var library = new Library();
   processFile(library, argv[2] || "index.html");
   console.log(library);
-} 
+}
