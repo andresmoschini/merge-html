@@ -47,9 +47,16 @@ async function readFile(filename: string): Promise<string> {
   });
 }
 
+function extractContent(fullContent: string) : string {
+   var regexp = /[\S\s]*<body>([\S\s]*)<\/body>[\S\s]*/gi;
+   var item = regexp.exec(fullContent);
+   return item[1];
+}
+
 function getReferencedFilenames(content: string): string[] {
   var result = [];
-  var regexp = /href=["'](.*?\.html)["']/g;
+  var regexp = /href=["'](.*?\.html)["']/gi;
+  // it is not working?
   var item;
   while(item = regexp.exec(content)) {
     result.push(item[1]);
@@ -60,7 +67,8 @@ function getReferencedFilenames(content: string): string[] {
 async function processFile(library: Library, filename: string) : Promise<string> {
   var result = "";
   if (!library.hasDocument(filename)) {
-    var content = await readFile(filename);
+    var fullContent = await readFile(filename);
+    var content = extractContent(fullContent);
     result += content;
     var document = library.addDocument(filename);
     getReferencedFilenames(content).forEach(async rf => {
