@@ -6,30 +6,27 @@ import * as fs from "fs";
 interface IDocument {
   filename: string;
   elementId: string;
-  content: string;
 }
 
 class Library {
   static elementIdPrefix: string = "merge-html-";
-  documents: IDocument[] = [];
   documentsByFilename: { [filename: string]: IDocument } = {};
   documentsCount: number = 0;
 
-  public addDocument(filename: string, content: string): IDocument {
+  public addDocument(filename: string): IDocument {
     if (this.hasDocument(filename)) {
       throw `File ${filename} already exist in this library.`;
     }
     this.documentsCount++;
     var document = {
       filename: filename,
-      elementId: Library.elementIdPrefix + this.documentsCount,
-      content: content
+      elementId: Library.elementIdPrefix + this.documentsCount
     }
-    this.documents.push(document);
     this.documentsByFilename[filename] = document;
     return document;
   }
 
+  
   public hasDocument(filename: string) {
     return this.documentsByFilename.hasOwnProperty(filename);
   }
@@ -50,18 +47,22 @@ function getReferencedFilenames(content: string): string[] {
   return result;
 }
 
-function processFile(library: Library, filename: string) {
+function processFile(library: Library, filename: string) : string {
+  var result = "";
   if (!library.hasDocument(filename)) {
     var content = readFile(filename);
-    var document = library.addDocument(filename, content);
+    result += content;
+    var document = library.addDocument(filename);
     getReferencedFilenames(content).forEach(rf => {
-        processFile(library, rf);
+        result += processFile(library, rf);
     });
   }
+  return result;
 }
 
 export default function main(argv: string[]) {
   var library = new Library();
-  processFile(library, argv[2] || "index.html");
+  var result = processFile(library, argv[2] || "index.html");
+  console.log(result);
   console.log(library);
 }
