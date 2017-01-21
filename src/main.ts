@@ -1,5 +1,6 @@
 import { sayHello } from "./greet";
 import * as fs from "fs";
+import * as es6Promise from "es6-promise";
 
 // TODO: support relative and absolute file paths based on html paths
 
@@ -32,9 +33,18 @@ class Library {
   }
 }
 
-function readFile(filename: string): string {
+async function readFile(filename: string): Promise<string> {
   // TODO: make it async
-  return fs.readFileSync(filename, "utf8");
+  // return await fs.readFile(filename, "utf8");
+  return new es6Promise.Promise<string>((resolve, reject) => {
+    fs.readFile(filename, "utf8", (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
 }
 
 function getReferencedFilenames(content: string): string[] {
@@ -47,22 +57,22 @@ function getReferencedFilenames(content: string): string[] {
   return result;
 }
 
-function processFile(library: Library, filename: string) : string {
+async function processFile(library: Library, filename: string) : Promise<string> {
   var result = "";
   if (!library.hasDocument(filename)) {
-    var content = readFile(filename);
+    var content = await readFile(filename);
     result += content;
     var document = library.addDocument(filename);
-    getReferencedFilenames(content).forEach(rf => {
-        result += processFile(library, rf);
+    getReferencedFilenames(content).forEach(async rf => {
+        result += await processFile(library, rf);
     });
   }
   return result;
 }
 
-export default function main(argv: string[]) {
+export default async function main(argv: string[]) {
   var library = new Library();
-  var result = processFile(library, argv[2] || "index.html");
+  var result = await processFile(library, argv[2] || "index.html");
   console.log(result);
   console.log(library);
 }
